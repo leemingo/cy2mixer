@@ -2,4 +2,5 @@
 data/
 logs/
 errors/
+saved_models/
 *.ipynb
