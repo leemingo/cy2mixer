@@ -1,0 +1,5 @@
+# Ignore everything in the data/, logs/, errors/ folder
+data/
+logs/
+errors/
+*.ipynb
