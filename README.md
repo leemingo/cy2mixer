@@ -1,4 +1,4 @@
-## Pay attention to cycle for spatio-temporal graph neural network
+## Enhancing Topological Dependencies in Spatio-Temporal Graphs with Cycle Message Passing Blocks
 
 ## Environment Setup
 
