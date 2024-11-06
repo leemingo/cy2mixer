@@ -4,3 +4,4 @@ logs/
 errors/
 saved_models/
 *.ipynb
+Bigscity-LibCity/logs/

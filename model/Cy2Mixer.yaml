@@ -15,7 +15,7 @@ PEMS04:
   lr_decay_rate: 0.1
   batch_size: 16
   max_epochs: 300
-  early_stop: 20
+  early_stop: 30
   use_cl: False
   cl_step_size: 2500
 
@@ -27,16 +27,16 @@ PEMS04:
     steps_per_day: 288
     input_dim: 3
     output_dim: 1
-    # input_embedding_dim: 24
-    # tod_embedding_dim: 24
-    # dow_embedding_dim: 24
-    # spatial_embedding_dim: 0
-    # adaptive_embedding_dim: 80
-    input_embedding_dim: 32
-    tod_embedding_dim: 32
-    dow_embedding_dim: 32
+    input_embedding_dim: 24
+    tod_embedding_dim: 24
+    dow_embedding_dim: 24
     spatial_embedding_dim: 0
-    adaptive_embedding_dim: 132
+    adaptive_embedding_dim: 80
+    # input_embedding_dim: 32
+    # tod_embedding_dim: 32
+    # dow_embedding_dim: 32
+    # spatial_embedding_dim: 0
+    # adaptive_embedding_dim: 132
     feed_forward_dim: 152
     num_layers: 3
     dropout: 0.4
@@ -93,13 +93,14 @@ PEMS08:
   time_of_day: True
   day_of_week: True
 
-  lr: 0.001
+  lr: 0.0005
   weight_decay: 0.0015
+  # weight_decay: 0.001
   milestones: [25, 45, 65]
   lr_decay_rate: 0.1
   batch_size: 16
   max_epochs: 300
-  early_stop: 30
+  early_stop: 50
   use_cl: False
   cl_step_size: 2500
 
@@ -118,6 +119,47 @@ PEMS08:
     adaptive_embedding_dim: 80
     feed_forward_dim: 152
     num_layers: 3
-    dropout: 0.1
+    dropout: 0.4
     use_tinyatt: True
+
+METRLA:
+  num_nodes: 207
+  in_steps: 12
+  out_steps: 12
+
+  train_size: 0.7
+  val_size: 0.1
+
+  time_of_day: True
+  day_of_week: True
+
+  # lr: 0.001
+  lr: 0.0005
+  weight_decay: 0.0015
+  milestones: [20,30]
+  lr_decay_rate: 0.1
+  batch_size: 16
+  max_epochs: 200
+  early_stop: 30
+  use_cl: False
+  cl_step_size: 2500
+  #clip_grad: 5
+
+  model_args:
+    gpu_num : 0
+    num_nodes: 207
+    in_steps: 12
+    out_steps: 12
+    steps_per_day: 288
+    input_dim: 3
+    output_dim: 1
+    input_embedding_dim: 24
+    tod_embedding_dim: 24
+    dow_embedding_dim: 24
+    spatial_embedding_dim: 0
+    adaptive_embedding_dim: 80
+    feed_forward_dim: 152
+    # num_heads: 4
+    num_layers: 4
+    dropout: 0.4
     

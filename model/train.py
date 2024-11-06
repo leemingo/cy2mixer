@@ -12,7 +12,7 @@ import yaml
 import json
 import sys
 
-sys.path.append("..")
+sys.path.append("/home/ubuntu/LMH/cy2mixer")
 from lib.utils import (
     MaskedMAELoss,
     print_log,
@@ -25,7 +25,6 @@ from lib.data_prepare import get_dataloaders_from_index_data
 from model.Cy2Mixer import Cy2Mixer
 
 # ! X shape: (B, T, N, C)
-
 
 @torch.no_grad()
 def eval_model(model, valset_loader, criterion):
@@ -223,6 +222,7 @@ if __name__ == "__main__":
     parser.add_argument("-g", "--gpu_num", type=int, default=0)
     parser.add_argument("-cfg", "--cfg", type=str, default='STAEformer')
     parser.add_argument("-s", "--seed", type=int, default=0)
+    parser.add_argument("-p", "--pe", type=str, default=None)
     
     args = parser.parse_args()
 
@@ -247,6 +247,7 @@ if __name__ == "__main__":
     
     # -------------------------------- load model -------------------------------- #
     cfg['model_args']['dataset'] = args.dataset
+    cfg['model_args']['pe'] = args.pe
     model = Cy2Mixer(**cfg["model_args"])
     
         
@@ -278,6 +279,25 @@ if __name__ == "__main__":
     )
     print_log(log=log)
 
+    data = next(iter(trainset_loader))
+    data = data[0][0]
+
+    import pickle
+    import time
+    with open(f'../data/{dataset.upper()}/{dataset.lower()}_A_mx.pkl', 'rb') as f:
+        A_mx = pickle.load(f)
+
+    from torch_geometric.utils import dense_to_sparse
+    from torch_geometric.data import Data
+    from lib.utils import make_cy2c
+
+    A_mx = torch.Tensor(A_mx)
+    edge_index = dense_to_sparse(A_mx)[0]
+    geo_data = Data(x=data, edge_index=edge_index)
+    max_node = data.shape[1]
+    cycle_index, _, _, _ = make_cy2c(geo_data, max_node)
+    
+
     # --------------------------- set model saving path -------------------------- #
 
     save_path = f"../saved_models/"
@@ -287,17 +307,25 @@ if __name__ == "__main__":
 
     # ---------------------- set loss, optimizer, scheduler ---------------------- #
 
-    if dataset in ("PEMS03", "PEMS04", "PEMS07", "PEMS08"):
+    if dataset in ("PEMS03", "PEMS04", "PEMS07", "PEMS08", "METRLA"):
         criterion = nn.HuberLoss()
     else:
         raise ValueError("Unsupported dataset.")
 
-    optimizer = torch.optim.Adam(
+    # optimizer = torch.optim.Adam(
+    #     model.parameters(),
+    #     lr=cfg["lr"],
+    #     weight_decay=cfg.get("weight_decay", 0),
+    #     eps=cfg.get("eps", 1e-8),
+    # )
+    
+    optimizer = torch.optim.AdamW(
         model.parameters(),
         lr=cfg["lr"],
         weight_decay=cfg.get("weight_decay", 0),
         eps=cfg.get("eps", 1e-8),
     )
+
     scheduler = torch.optim.lr_scheduler.MultiStepLR(
         optimizer,
         milestones=cfg["milestones"],

@@ -1,0 +1,209 @@
+nohup: ignoring input
+/home/ubuntu/miniforge3/envs/mm/lib/python3.10/site-packages/torch/optim/lr_scheduler.py:28: UserWarning: The verbose parameter is deprecated. Please use get_last_lr() to access the learning rate.
+  warnings.warn("The verbose parameter is deprecated. Please use get_last_lr() "
+PEMS08
+Trainset:	x-(10700, 12, 170, 3)	y-(10700, 12, 170, 1)
+Valset:  	x-(3567, 12, 170, 3)  	y-(3567, 12, 170, 1)
+Testset:	x-(3566, 12, 170, 3)	y-(3566, 12, 170, 1)
+
+--------- Cy2Mixer ---------
+{
+    "num_nodes": 170,
+    "in_steps": 12,
+    "out_steps": 12,
+    "train_size": 0.6,
+    "val_size": 0.2,
+    "time_of_day": true,
+    "day_of_week": true,
+    "lr": 0.0005,
+    "weight_decay": 0.0015,
+    "milestones": [
+        25,
+        45,
+        65
+    ],
+    "lr_decay_rate": 0.1,
+    "batch_size": 16,
+    "max_epochs": 300,
+    "early_stop": 50,
+    "use_cl": false,
+    "cl_step_size": 2500,
+    "model_args": {
+        "gpu_num": 0,
+        "num_nodes": 170,
+        "in_steps": 12,
+        "out_steps": 12,
+        "steps_per_day": 288,
+        "input_dim": 3,
+        "output_dim": 1,
+        "input_embedding_dim": 24,
+        "tod_embedding_dim": 24,
+        "dow_embedding_dim": 24,
+        "spatial_embedding_dim": 0,
+        "adaptive_embedding_dim": 80,
+        "feed_forward_dim": 152,
+        "num_layers": 3,
+        "dropout": 0.4,
+        "use_tinyatt": true,
+        "dataset": "pems08"
+    }
+}
+=========================================================================================================
+Layer (type:depth-idx)                                  Output Shape              Param #
+=========================================================================================================
+Cy2Mixer                                                [16, 12, 170, 1]          163,200
+├─Linear: 1-1                                           [16, 12, 170, 24]         96
+├─Embedding: 1-2                                        [16, 12, 170, 24]         6,912
+├─Embedding: 1-3                                        [16, 12, 170, 24]         168
+├─ModuleList: 1-4                                       --                        --
+│    └─Cy2Mixer_layer: 2-1                              [16, 12, 170, 152]        --
+│    │    └─Cy2MixerBlock: 3-1                          [16, 170, 12, 152]        164,150
+│    │    └─LayerNorm: 3-2                              [16, 12, 170, 152]        304
+│    │    └─Dropout: 3-3                                [16, 12, 170, 152]        --
+│    │    └─Cy2MixerBlock: 3-4                          [16, 12, 170, 152]        186,962
+│    │    └─LayerNorm: 3-5                              [16, 12, 170, 152]        304
+│    │    └─Dropout: 3-6                                [16, 12, 170, 152]        --
+│    │    └─Cy2MixerBlock: 3-7                          [16, 12, 170, 152]        186,962
+│    │    └─LayerNorm: 3-8                              [16, 12, 170, 152]        304
+│    │    └─Dropout: 3-9                                [16, 12, 170, 152]        --
+│    │    └─Conv2d: 3-10                                [16, 152, 170, 12]        69,464
+│    └─Cy2Mixer_layer: 2-2                              [16, 12, 170, 152]        --
+│    │    └─Cy2MixerBlock: 3-11                         [16, 170, 12, 152]        164,150
+│    │    └─LayerNorm: 3-12                             [16, 12, 170, 152]        304
+│    │    └─Dropout: 3-13                               [16, 12, 170, 152]        --
+│    │    └─Cy2MixerBlock: 3-14                         [16, 12, 170, 152]        186,962
+│    │    └─LayerNorm: 3-15                             [16, 12, 170, 152]        304
+│    │    └─Dropout: 3-16                               [16, 12, 170, 152]        --
+│    │    └─Cy2MixerBlock: 3-17                         [16, 12, 170, 152]        186,962
+│    │    └─LayerNorm: 3-18                             [16, 12, 170, 152]        304
+│    │    └─Dropout: 3-19                               [16, 12, 170, 152]        --
+│    │    └─Conv2d: 3-20                                [16, 152, 170, 12]        69,464
+│    └─Cy2Mixer_layer: 2-3                              [16, 12, 170, 152]        --
+│    │    └─Cy2MixerBlock: 3-21                         [16, 170, 12, 152]        164,150
+│    │    └─LayerNorm: 3-22                             [16, 12, 170, 152]        304
+│    │    └─Dropout: 3-23                               [16, 12, 170, 152]        --
+│    │    └─Cy2MixerBlock: 3-24                         [16, 12, 170, 152]        186,962
+│    │    └─LayerNorm: 3-25                             [16, 12, 170, 152]        304
+│    │    └─Dropout: 3-26                               [16, 12, 170, 152]        --
+│    │    └─Cy2MixerBlock: 3-27                         [16, 12, 170, 152]        186,962
+│    │    └─LayerNorm: 3-28                             [16, 12, 170, 152]        304
+│    │    └─Dropout: 3-29                               [16, 12, 170, 152]        --
+│    │    └─Conv2d: 3-30                                [16, 152, 170, 12]        69,464
+├─Linear: 1-5                                           [16, 170, 12]             21,900
+=========================================================================================================
+Total params: 2,017,626
+Trainable params: 2,017,626
+Non-trainable params: 0
+Total mult-adds (G): 34.69
+=========================================================================================================
+Input size (MB): 0.39
+Forward/backward pass size (MB): 4072.17
+Params size (MB): 7.41
+Estimated Total Size (MB): 4079.97
+=========================================================================================================
+
+Loss: HuberLoss
+
+2024-09-10 07:38:49.334658 Epoch 1  	Train Loss = 30.63104 Val Loss = 19.33891
+2024-09-10 07:40:34.023247 Epoch 2  	Train Loss = 18.65829 Val Loss = 17.31076
+2024-09-10 07:42:16.925257 Epoch 3  	Train Loss = 17.31005 Val Loss = 15.98424
+2024-09-10 07:43:56.303149 Epoch 4  	Train Loss = 16.42560 Val Loss = 15.82500
+2024-09-10 07:45:32.884711 Epoch 5  	Train Loss = 16.00500 Val Loss = 15.83111
+2024-09-10 07:47:12.928512 Epoch 6  	Train Loss = 15.64873 Val Loss = 15.25065
+2024-09-10 07:48:56.307040 Epoch 7  	Train Loss = 15.26079 Val Loss = 14.75048
+2024-09-10 07:50:41.053906 Epoch 8  	Train Loss = 14.95708 Val Loss = 14.78146
+2024-09-10 07:52:26.315885 Epoch 9  	Train Loss = 14.81035 Val Loss = 14.69415
+2024-09-10 07:54:10.349240 Epoch 10  	Train Loss = 14.43992 Val Loss = 14.94274
+2024-09-10 07:55:51.993380 Epoch 11  	Train Loss = 14.31576 Val Loss = 14.98466
+2024-09-10 07:57:31.255246 Epoch 12  	Train Loss = 14.02166 Val Loss = 14.41547
+2024-09-10 07:59:14.289473 Epoch 13  	Train Loss = 13.79827 Val Loss = 13.98143
+2024-09-10 08:00:57.461529 Epoch 14  	Train Loss = 13.65617 Val Loss = 14.06452
+2024-09-10 08:02:41.535646 Epoch 15  	Train Loss = 13.57258 Val Loss = 13.93492
+2024-09-10 08:04:21.996582 Epoch 16  	Train Loss = 13.42750 Val Loss = 13.76200
+2024-09-10 08:06:01.129148 Epoch 17  	Train Loss = 13.29829 Val Loss = 13.60958
+2024-09-10 08:07:42.442605 Epoch 18  	Train Loss = 13.26035 Val Loss = 13.52015
+2024-09-10 08:09:24.848270 Epoch 19  	Train Loss = 13.13319 Val Loss = 13.63213
+2024-09-10 08:11:09.111046 Epoch 20  	Train Loss = 12.98588 Val Loss = 13.84452
+2024-09-10 08:12:54.947554 Epoch 21  	Train Loss = 12.95146 Val Loss = 13.55941
+2024-09-10 08:14:38.313498 Epoch 22  	Train Loss = 12.81179 Val Loss = 14.24766
+2024-09-10 08:16:20.796596 Epoch 23  	Train Loss = 12.73022 Val Loss = 13.73910
+2024-09-10 08:18:00.233446 Epoch 24  	Train Loss = 12.72800 Val Loss = 13.83341
+2024-09-10 08:19:42.160854 Epoch 25  	Train Loss = 12.59774 Val Loss = 13.59413
+2024-09-10 08:21:26.132613 Epoch 26  	Train Loss = 12.06728 Val Loss = 13.24359
+2024-09-10 08:23:10.809360 Epoch 27  	Train Loss = 11.96159 Val Loss = 13.25261
+2024-09-10 08:24:54.636767 Epoch 28  	Train Loss = 11.92605 Val Loss = 13.25360
+2024-09-10 08:26:38.506870 Epoch 29  	Train Loss = 11.89523 Val Loss = 13.26232
+2024-09-10 08:28:22.292221 Epoch 30  	Train Loss = 11.87067 Val Loss = 13.24318
+2024-09-10 08:30:06.077849 Epoch 31  	Train Loss = 11.84614 Val Loss = 13.28863
+2024-09-10 08:31:46.859905 Epoch 32  	Train Loss = 11.82666 Val Loss = 13.29879
+2024-09-10 08:33:30.215484 Epoch 33  	Train Loss = 11.80460 Val Loss = 13.33214
+2024-09-10 08:35:12.603681 Epoch 34  	Train Loss = 11.78256 Val Loss = 13.30077
+2024-09-10 08:36:56.579378 Epoch 35  	Train Loss = 11.76381 Val Loss = 13.30661
+2024-09-10 08:38:40.786920 Epoch 36  	Train Loss = 11.74421 Val Loss = 13.32719
+2024-09-10 08:40:24.461578 Epoch 37  	Train Loss = 11.72857 Val Loss = 13.31204
+2024-09-10 08:42:06.064390 Epoch 38  	Train Loss = 11.70837 Val Loss = 13.34217
+2024-09-10 08:43:49.688640 Epoch 39  	Train Loss = 11.69076 Val Loss = 13.35551
+2024-09-10 08:45:33.983407 Epoch 40  	Train Loss = 11.67429 Val Loss = 13.37060
+2024-09-10 08:47:18.096269 Epoch 41  	Train Loss = 11.65907 Val Loss = 13.39565
+2024-09-10 08:49:01.555880 Epoch 42  	Train Loss = 11.64174 Val Loss = 13.31748
+2024-09-10 08:50:40.339588 Epoch 43  	Train Loss = 11.62584 Val Loss = 13.37196
+2024-09-10 08:52:18.053506 Epoch 44  	Train Loss = 11.61338 Val Loss = 13.42991
+2024-09-10 08:54:00.344903 Epoch 45  	Train Loss = 11.59718 Val Loss = 13.43702
+2024-09-10 08:55:39.418277 Epoch 46  	Train Loss = 11.54724 Val Loss = 13.36272
+2024-09-10 08:57:22.759711 Epoch 47  	Train Loss = 11.53738 Val Loss = 13.35822
+2024-09-10 08:59:09.237205 Epoch 48  	Train Loss = 11.53303 Val Loss = 13.37946
+2024-09-10 09:00:52.025505 Epoch 49  	Train Loss = 11.52946 Val Loss = 13.37486
+2024-09-10 09:01:41.392649 Epoch 50  	Train Loss = 11.52918 Val Loss = 13.37338
+2024-09-10 09:02:29.603877 Epoch 51  	Train Loss = 11.52666 Val Loss = 13.36589
+2024-09-10 09:03:18.273456 Epoch 52  	Train Loss = 11.52242 Val Loss = 13.36154
+2024-09-10 09:04:06.539193 Epoch 53  	Train Loss = 11.52009 Val Loss = 13.36309
+2024-09-10 09:05:11.453922 Epoch 54  	Train Loss = 11.51699 Val Loss = 13.38264
+2024-09-10 09:06:16.938922 Epoch 55  	Train Loss = 11.51655 Val Loss = 13.37793
+2024-09-10 09:07:04.971887 Epoch 56  	Train Loss = 11.51363 Val Loss = 13.37688
+2024-09-10 09:07:53.110381 Epoch 57  	Train Loss = 11.51115 Val Loss = 13.37206
+2024-09-10 09:08:41.874844 Epoch 58  	Train Loss = 11.50999 Val Loss = 13.37752
+2024-09-10 09:09:31.264013 Epoch 59  	Train Loss = 11.50842 Val Loss = 13.38085
+2024-09-10 09:10:24.298062 Epoch 60  	Train Loss = 11.50626 Val Loss = 13.38428
+2024-09-10 09:11:50.618531 Epoch 61  	Train Loss = 11.50628 Val Loss = 13.37160
+2024-09-10 09:13:25.082924 Epoch 62  	Train Loss = 11.50286 Val Loss = 13.39376
+2024-09-10 09:15:01.588841 Epoch 63  	Train Loss = 11.50175 Val Loss = 13.39155
+2024-09-10 09:15:57.811586 Epoch 64  	Train Loss = 11.49994 Val Loss = 13.38066
+2024-09-10 09:16:45.554730 Epoch 65  	Train Loss = 11.49574 Val Loss = 13.37600
+2024-09-10 09:17:33.240886 Epoch 66  	Train Loss = 11.49114 Val Loss = 13.38201
+2024-09-10 09:18:20.934992 Epoch 67  	Train Loss = 11.48978 Val Loss = 13.38511
+2024-09-10 09:19:08.852377 Epoch 68  	Train Loss = 11.49055 Val Loss = 13.38600
+2024-09-10 09:19:56.871080 Epoch 69  	Train Loss = 11.49022 Val Loss = 13.38527
+2024-09-10 09:20:44.967542 Epoch 70  	Train Loss = 11.49025 Val Loss = 13.38565
+2024-09-10 09:21:32.723706 Epoch 71  	Train Loss = 11.49023 Val Loss = 13.38503
+2024-09-10 09:22:31.888376 Epoch 72  	Train Loss = 11.48885 Val Loss = 13.38523
+2024-09-10 09:23:19.426717 Epoch 73  	Train Loss = 11.48906 Val Loss = 13.38602
+2024-09-10 09:24:07.584123 Epoch 74  	Train Loss = 11.48874 Val Loss = 13.38451
+2024-09-10 09:24:56.302781 Epoch 75  	Train Loss = 11.48878 Val Loss = 13.38378
+2024-09-10 09:25:45.537975 Epoch 76  	Train Loss = 11.48962 Val Loss = 13.38568
+2024-09-10 09:26:34.282302 Epoch 77  	Train Loss = 11.48854 Val Loss = 13.38305
+2024-09-10 09:28:01.799554 Epoch 78  	Train Loss = 11.48799 Val Loss = 13.38320
+2024-09-10 09:29:41.296586 Epoch 79  	Train Loss = 11.48859 Val Loss = 13.38719
+2024-09-10 09:31:19.932119 Epoch 80  	Train Loss = 11.48821 Val Loss = 13.38375
+Average Training Time : 76.1488746613264
+Early stopping at epoch: 80
+Best at epoch 30:
+Train Loss = 11.87067
+Train RMSE = 20.63386, MAE = 11.71367, MAPE = 7.82600
+Val Loss = 13.24318
+Val RMSE = 25.18912, MAE = 13.81033, MAPE = 10.44795
+Saved Model: ../saved_models/Cy2Mixer-PEMS08-2024-09-10-07-37-04.pt
+--------- Test ---------
+All Steps RMSE = 24.10663, MAE = 13.70129, MAPE = 8.94576
+Step 1 RMSE = 19.59987, MAE = 11.70890, MAPE = 7.69340
+Step 2 RMSE = 20.97550, MAE = 12.33535, MAPE = 8.06257
+Step 3 RMSE = 21.98896, MAE = 12.79566, MAPE = 8.33585
+Step 4 RMSE = 22.85241, MAE = 13.17405, MAPE = 8.57004
+Step 5 RMSE = 23.57229, MAE = 13.48506, MAPE = 8.77279
+Step 6 RMSE = 24.24428, MAE = 13.76867, MAPE = 8.96567
+Step 7 RMSE = 24.83740, MAE = 14.03594, MAPE = 9.12977
+Step 8 RMSE = 25.30709, MAE = 14.25167, MAPE = 9.28757
+Step 9 RMSE = 25.69609, MAE = 14.43722, MAPE = 9.42262
+Step 10 RMSE = 26.03086, MAE = 14.61146, MAPE = 9.55342
+Step 11 RMSE = 26.33819, MAE = 14.78825, MAPE = 9.68754
+Step 12 RMSE = 26.67030, MAE = 15.02328, MAPE = 9.86781
+Inference time: 5.03 s

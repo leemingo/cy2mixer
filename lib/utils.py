@@ -1,9 +1,12 @@
+import networkx as nx
 import numpy as np
 import torch
 import pickle
 import random
 import os
 import json
+from torch_geometric.utils import add_self_loops, remove_self_loops
+from torch_geometric.utils.convert import to_networkx
 
 
 class StandardScaler:
@@ -145,3 +148,87 @@ def print_model_params(model):
             print("%-40s\t%-30s\t%-30s" % (name, list(param.shape), param.numel()))
             param_count += param.numel()
     print("%-40s\t%-30s" % ("Total trainable params", param_count))
+
+
+def _make_cycle_adj_speed_nosl(original_adj, data):
+        Xgraph = to_networkx(data, to_undirected=True)
+        num_g_cycle = (
+            Xgraph.number_of_edges()
+            - Xgraph.number_of_nodes()
+            + nx.number_connected_components(Xgraph)
+        )
+        node_each_cycle = nx.cycle_basis(Xgraph)
+
+        if num_g_cycle > 0:
+            if len(node_each_cycle) != num_g_cycle:
+                raise ValueError(
+                    f"Number of cycles mismatch: local {len(node_each_cycle)}, total {num_g_cycle}"
+                )
+
+            cycle_adj = np.zeros(original_adj.shape)
+            for nodes in node_each_cycle:
+                for i in nodes:
+                    cycle_adj[i, nodes] = 1
+                cycle_adj[nodes, nodes] = 0
+        else:
+            node_each_cycle, cycle_adj = [], []
+
+        return node_each_cycle, cycle_adj
+
+
+def make_cy2c(
+    data, max_node, cy2c_self=False, cy2c_same_attr=False, cy2c_trans=False
+):
+    v1, v2 = data.edge_index
+    list_adj = torch.zeros((max_node, max_node))
+    list_adj[v1, v2] = 1
+    # list_feature = data.x
+
+    node_each_cycle, cycle_adj = _make_cycle_adj_speed_nosl(list_adj, data)
+
+    if len(cycle_adj) > 0:
+        stacked_adjs = np.stack((list_adj, cycle_adj), axis=0)
+    else:
+        cycle_adj = np.zeros((1, list_adj.shape[0], list_adj.shape[1]))
+        stacked_adjs = np.concatenate((list_adj[np.newaxis], cycle_adj), axis=0)
+
+    edge_index = data.edge_index
+    check_num = torch.sum(
+        edge_index[0] - np.where(stacked_adjs[0] == 1)[0]
+    ) + torch.sum(edge_index[1] - np.where(stacked_adjs[0] == 1)[1])
+    if check_num != 0:
+        print("error")
+        return False
+
+    cycle_index = torch.stack(
+        (
+            torch.LongTensor(np.where(stacked_adjs[1] != 0)[0]),
+            torch.LongTensor(np.where(stacked_adjs[1] != 0)[1]),
+        ),
+        dim=0,
+    )
+
+    if cy2c_self:
+        cycle_index, _ = remove_self_loops(
+            cycle_index
+        )  # Remove if self loops already exist
+        cycle_index, _ = add_self_loops(cycle_index)
+        cycle_attr = torch.ones(cycle_index.shape[1]).long()
+    else:
+        cycle_attr = torch.ones(cycle_index.shape[1]).long()
+
+    if cy2c_same_attr:
+        pos_edge_attr = torch.ones(edge_index.shape[1]).long()
+    else:
+        pos_edge_attr = torch.zeros(edge_index.shape[1]).long()
+
+    if cy2c_trans:
+        cycle_index, _ = remove_self_loops(cycle_index)
+        old_length = cycle_index.shape[1]
+        cycle_index, _ = add_self_loops(cycle_index)
+        new_length = cycle_index.shape[1]
+        cycle_attr = torch.ones(new_length).long()
+        if new_length > old_length:
+            cycle_attr[-(new_length - old_length) :] = 0
+
+    return cycle_index, cycle_attr, pos_edge_attr, node_each_cycle

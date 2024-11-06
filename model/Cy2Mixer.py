@@ -5,8 +5,8 @@ import torch.nn as nn
 import torch
 from torchinfo import summary
 from layers import Cy2Mixer_layer
-from torch_geometric.utils import degree, dense_to_sparse, to_dense_adj
-from torch_geometric.typing import SparseTensor
+from torch_geometric.utils import dense_to_sparse, to_dense_adj
+from lib.utils import make_cy2c
 
 
 class Cy2Mixer(nn.Module):
@@ -30,7 +30,8 @@ class Cy2Mixer(nn.Module):
         gpu_num = 0,
         dataset = 'pems04',
         use_tinyatt = True,
-        tgu_kernel_size = 3
+        tgu_kernel_size = 3,
+        pe = None
             ):
         super().__init__()
 
@@ -96,6 +97,7 @@ class Cy2Mixer(nn.Module):
             self.output_proj = nn.Linear(self.model_dim, self.output_dim)
 
         #MH
+        self.pe = pe
         self.encoder_blocks = nn.ModuleList(
                 [
                     Cy2Mixer_layer(
@@ -106,7 +108,8 @@ class Cy2Mixer(nn.Module):
                         self.output_dim,
                         use_tinyatt = self.use_tinyatt,
                         dropout = dropout,
-                        tgu_kernel_size = tgu_kernel_size
+                        tgu_kernel_size = tgu_kernel_size,
+                        pe = self.pe
                     )
                     for _ in range(num_layers)
                 ]
