@@ -27,3 +27,20 @@ python train.py -d pems04 -g 0 -cfg Cy2Mixer
 - PEMS07
 - PEMS08
 
+## Running Experiments on METR-LA
+
+To conduct experiments on the METR-LA dataset, navigate to the Bigscity-LibCity directory and execute the following command:
+
+```
+cd ./Bigscity-LibCity
+python run_model.py --task traffic_state_pred --model Cy2Mixer --dataset METR_LA
+```
+
+Ensure that the METR-LA data is located in the following directory:
+```
+./Bigscity-Libcity/raw_data/METR-LA
+```
+
+
+
+
