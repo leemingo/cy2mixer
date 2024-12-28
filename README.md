@@ -1,4 +1,8 @@
-## Pay attention to cycle for spatio-temporal graph neural network
+## Enhancing Topological Dependencies in Spatio-Temporal Graphs with Cycle Message Passing Blocks
+
+[![arXiv](https://img.shields.io/badge/arXiv-2402.02005-b31b1b.svg)](https://arxiv.org/abs/2401.15894)
+
+This repository is the official implementation of [Enhancing Topological Dependencies in Spatio-Temporal Graphs with Cycle Message Passing Blocks](https://arxiv.org/abs/2402.02005) (Lee et al., LoG 2024).
 
 ## Environment Setup
 
@@ -41,6 +45,5 @@ Ensure that the METR-LA data is located in the following directory:
 ./Bigscity-Libcity/raw_data/METR-LA
 ```
 
-
-
-
+## About This Project
+This project is developed and maintained by [SolverX](https://www.solverx.ai/) (previously known as Voltwin/AIAE).
